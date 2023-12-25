@@ -16,14 +16,12 @@ public Plugin myinfo = {
 }
 
 ConVar g_ConVarEnableInfiniteBuildings;
-//ConVar g_ConVarEnableInfinitBuildingsBots;
 
 public OnPluginStart() {
     AddCommandListener(OnBuild, "build");
     HookEvent("player_builtobject", OnBuilt);
 
     g_ConVarEnableInfiniteBuildings = CreateConVar("sm_infbuildings_enable", "1", "Enable infinite buildings");
-    //g_ConVarEnableInfinitBuildingsBots = CreateConVar("sm_infbuildings_enable_bots", "0", "Enable infinite buildings for bots. THIS MIGHT CRASH RCBot2");
 }
 
 public void OnClientPutInServer(int client){
@@ -40,7 +38,7 @@ public Action OnBuild(const int client, const char[] cmd, args){
 }
 
 public Action OnBuildDeferred(const Event event, const int client){ // revert if not enough metal to build any
-    if(IsClientInGame(client))
+    if(IsClientInGame(client) && !IsFakeClient(client))
         OnWeaponSwitch(client, GetEntPropEnt(client, Prop_Send, "m_hActiveWeapon"));
     return Plugin_Continue;
 }
@@ -53,7 +51,7 @@ public void OnBuilt(const Event event, const char[] name, const bool dontBroadca
 
 public Action OnWeaponSwitch(const int client, const int slot){
     if (g_ConVarEnableInfiniteBuildings.IntValue == 1) {
-        if(IsClientInGame(client))
+        if(IsClientInGame(client) && !IsFakeClient(client))
             if(TF2_GetPlayerClass(client) == TFClass_Engineer){
                 if((slot == GetPlayerWeaponSlot(client, 0) || slot == GetPlayerWeaponSlot(client, 1) || slot == GetPlayerWeaponSlot(client, 2) || slot == GetPlayerWeaponSlot(client, 3) || slot == GetPlayerWeaponSlot(client, 4)))
                     SetDisposableClient(client, slot == GetPlayerWeaponSlot(client, 3)); // PDA

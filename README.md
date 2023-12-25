@@ -2,11 +2,12 @@
 
 Infinite buildings using the `build` command and the PDA
 
+## Fork modifications
+I introduced a cvar to enable or disable the plugin, alongside a check for whether the client is a bot or not. Seems like RCBot2 crashes after hours if this isn't done.
+
 ## CVars
 - `sm_infbuildings_enable`
     - 1 to enable infinite buildings, 0 to disable.
-- `sm_infbuildings_enable_bots`
-    - WIP, would enable or disable inf buildings for bots to prevent crashes.
 
 ## Licensing
 [![Creative Commons License](https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png)](http://creativecommons.org/licenses/by-nc-sa/4.0/)
