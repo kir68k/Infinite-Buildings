@@ -1,4 +1,5 @@
 // Copyright (C) 2023 Katsute | Licensed under CC BY-NC-SA 4.0
+// Modified by Kirixetamine
 
 #pragma semicolon 1
 
@@ -14,9 +15,15 @@ public Plugin myinfo = {
     url         = "https://github.com/KatsuteTF/Infinite-Buildings"
 }
 
+ConVar g_ConVarEnableInfiniteBuildings;
+//ConVar g_ConVarEnableInfinitBuildingsBots;
+
 public OnPluginStart() {
     AddCommandListener(OnBuild, "build");
     HookEvent("player_builtobject", OnBuilt);
+
+    g_ConVarEnableInfiniteBuildings = CreateConVar("sm_infbuildings_enable", "1", "Enable infinite buildings");
+    //g_ConVarEnableInfinitBuildingsBots = CreateConVar("sm_infbuildings_enable_bots", "0", "Enable infinite buildings for bots. THIS MIGHT CRASH RCBot2");
 }
 
 public void OnClientPutInServer(int client){
@@ -28,6 +35,7 @@ public Action OnBuild(const int client, const char[] cmd, args){
         SetDisposableClient(client, true);
         CreateTimer(0.1, OnBuildDeferred, client);
     }
+
     return Plugin_Continue;
 }
 
@@ -44,12 +52,14 @@ public void OnBuilt(const Event event, const char[] name, const bool dontBroadca
 }
 
 public Action OnWeaponSwitch(const int client, const int slot){
-    if(IsClientInGame(client))
-        if(TF2_GetPlayerClass(client) == TFClass_Engineer){
-            if((slot == GetPlayerWeaponSlot(client, 0) || slot == GetPlayerWeaponSlot(client, 1) || slot == GetPlayerWeaponSlot(client, 2) || slot == GetPlayerWeaponSlot(client, 3) || slot == GetPlayerWeaponSlot(client, 4)))
-                SetDisposableClient(client, slot == GetPlayerWeaponSlot(client, 3)); // PDA
-        }else
-            SetDisposableClient(client, false);
+    if (g_ConVarEnableInfiniteBuildings.IntValue == 1) {
+        if(IsClientInGame(client))
+            if(TF2_GetPlayerClass(client) == TFClass_Engineer){
+                if((slot == GetPlayerWeaponSlot(client, 0) || slot == GetPlayerWeaponSlot(client, 1) || slot == GetPlayerWeaponSlot(client, 2) || slot == GetPlayerWeaponSlot(client, 3) || slot == GetPlayerWeaponSlot(client, 4)))
+                    SetDisposableClient(client, slot == GetPlayerWeaponSlot(client, 3)); // PDA
+            } else
+                SetDisposableClient(client, false);
+    }
     return Plugin_Continue;
 }
 
